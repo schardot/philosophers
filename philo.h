@@ -30,12 +30,19 @@ typedef struct	s_philo
 	int				id;
 	int				is_eating;
 	int				has_eaten;
-	pthread_mutex_t eaten_mtx;
+	pthread_mutex_t	eaten_mtx;
 	long 			last_meal;
 	struct timeval	lmeal_tval;
-	pthread_mutex_t lmeal_mtx;
-	pthread_mutex_t fork;
+	pthread_mutex_t	lmeal_mtx;
+	pthread_mutex_t	fork;
+	pthread_mutex_t	*otherfork;
 	int				dead;
+	int				ph_count;
+	long			time_hungry_max;
+	long			time_eating;
+	long			time_sleeping;
+	long			num_meals;
+	struct timeval	start;
 	t_info			*info;
 }	t_philo;
 
@@ -61,5 +68,8 @@ int		meals_mutex(t_philo *philo, int mode);
 t_philo	**init_philos_array(t_info *in);
 t_philo	*init_philo_struct(int i, t_info *info);
 void	monitor(int num_philos, t_philo **ps, t_info *info);
+t_info	*init_info_mtxs(t_info *in);
+void	*one_philo(t_philo *p);
+void	assign_fork(t_philo *p);
 
 #endif

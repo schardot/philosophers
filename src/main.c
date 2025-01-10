@@ -17,58 +17,60 @@ void *routine(void *arg)
 	int next;
 
 	p = (t_philo *)arg;
-	next = (p->id + 1) % p->info->ph_count;
+	if (p->ph_count == 1)
+		return(one_philo(p));
+	next = (p->id) % p->ph_count;
+	if (p->id % 2 == 0)
+			usleep(1000);
 	while (1)
 	{
 		if (death_mutex(p->info, 0) > 0)
 			break;
-		if (p->id % 2 == 0)
-			usleep(100 * 1000);
-		pthread_mutex_lock(&p->info->forks[next]);
-		print_msg(get_time(p->info->start), p, TAKEN_FORK);
-		pthread_mutex_lock(&p->info->forks[p->id]);
-		print_msg(get_time(p->info->start), p, TAKEN_FORK);
-		print_msg(get_time(p->info->start), p, IS_EATING);
+
+		print_msg(get_time(p->start), p, IS_EATING);
 		pthread_mutex_lock(&p->lmeal_mtx);
-		p->last_meal = get_time(p->info->start);
+		p->last_meal = get_time(p->start);
 		pthread_mutex_unlock(&p->lmeal_mtx);
-		usleep(p->info->time_eating);
+		usleep(p->time_eating);
 		pthread_mutex_unlock(&p->info->forks[next]);
-		pthread_mutex_unlock(&p->info->forks[p->id]);
-		print_msg(get_time(p->info->start), p, IS_SLEEPING);
-		usleep(p->info->time_sleeping);
-		print_msg(get_time(p->info->start), p, IS_THINKING);
-		meals_mutex(p, 1); // p->meals ++;
+		pthread_mutex_unlock(&p->info->forks[p->id - 1]);
+		print_msg(get_time(p->start), p, IS_SLEEPING);
+		usleep(p->time_sleeping);
+		print_msg(get_time(p->start), p, IS_THINKING);
+		usleep(p->time_hungry_max/3);
+		meals_mutex(p, 1);
 		if (p->has_eaten == p->info->num_meals || death_mutex(p->info, 0) > 0)
 			break;
 	}
 	return (NULL);
 }
 
-int	death_mutex(t_info *info, int mode)
+void	assign_fork(t_philo *p)
 {
-	pthread_mutex_lock(info->death_mutex);
-	if (mode == 0)
-		return (info->dead);
-	pthread_mutex_unlock(info->death_mutex);
-	return (-1);
+	int	next;
+
+	next = (p->id) % p->ph_count;
+	p->fork = p->info->forks[p->id - 1];
+	p->otherfork = &p->info->forks[next];
+	if (p->id % 2 == 0)
+	{
+		p->otherfork = &p->info->forks[p->id - 1];
+		p->fork = p->info->forks[next];
+	}
 }
 
-int meals_mutex(t_philo *philo, int mode)
+void	*one_philo(t_philo *p)
 {
-	pthread_mutex_lock(&philo->eaten_mtx);
-	if (mode == 0)
-		return (philo->has_eaten);
-	else if (mode == 1)
-		philo->has_eaten ++;
-	pthread_mutex_unlock(&philo->eaten_mtx);
-	return (-1);
+	pthread_mutex_lock(&p->info->forks[p->id - 1]);
+	print_msg(get_time(p->start), p, TAKEN_FORK);
+	usleep(p->time_hungry_max);
+	return (NULL);
 }
 
 void	init_dinner(t_info *in)
 {
 	t_philo		**philos_array;
-	pthread_t	**threads_array;
+	pthread_t	*threads_array;
 	int			i;
 
 	philos_array = init_philos_array(in);
@@ -80,14 +82,14 @@ void	init_dinner(t_info *in)
 	i = -1;
 	while (++i < in->ph_count)
 	{
-		if (pthread_create(threads_array[i], NULL, &routine, NULL) != 0)
+		if (pthread_create(&threads_array[i], NULL, &routine, philos_array[i]) != 0)
 			return ;
 	}
 	monitor(in->ph_count, philos_array, in);
 	i = -1;
 	while (++i < in->ph_count)
 	{
-		if (pthread_join(*threads_array[i], NULL) != 0)
+		if (pthread_join(threads_array[i], NULL) != 0)
 			return;
 	}
 }
@@ -96,7 +98,7 @@ void monitor(int num_philos, t_philo **ps, t_info *info)
 {
 	int i;
 	int time_elapsed;
-	usleep(info->time_hungry_max);
+	usleep(info->time_hungry_max/2);
 	while (1)
 	{
 		i = 0;
@@ -115,7 +117,6 @@ void monitor(int num_philos, t_philo **ps, t_info *info)
 		}
 		if (death_mutex(info, 0) > 0)
 			break;
-		usleep(1000 * 1000);
 	}
 }
 
