@@ -61,7 +61,11 @@ t_philo *init_philo_struct(int i, t_info *info)
 	philo->start = info->start;
 	philo->info = malloc(sizeof(t_info *));
 	philo->info = info;
-	return (philo);
+    philo->lmeal_tval = info->start;
+    //gettimeofday(&philo->lmeal_tval, NULL);
+    //philo->last_meal = (philo->lmeal_tval.tv_sec * 1000) + (philo->lmeal_tval.tv_usec / 1000);
+    return (philo);
+
 }
 
 t_info	*init_info_mtxs(t_info *in)

@@ -97,9 +97,9 @@ void	init_dinner(t_info *in)
 void monitor(int num_philos, t_philo **ps, t_info *info)
 {
 	int i;
-	int time_elapsed;
-	usleep(info->time_hungry_max/2);
-	while (1)
+	long time_elapsed;
+    usleep(1000);
+    while (1)
 	{
 		i = 0;
 		while (i < num_philos)
@@ -107,15 +107,16 @@ void monitor(int num_philos, t_philo **ps, t_info *info)
 			pthread_mutex_lock(&ps[i]->lmeal_mtx);
 			time_elapsed = get_time(ps[i]->lmeal_tval);
 			pthread_mutex_unlock(&ps[i]->lmeal_mtx);
-			if (time_elapsed > info->time_hungry_max)
+			if (time_elapsed > (info->time_hungry_max / 1000))
 			{
 				print_msg(get_time(ps[i]->info->start), ps[i], DIED);
 				death_mutex(info, 1);
 				return;
 			}
 			i++;
-		}
-		if (death_mutex(info, 0) > 0)
+        }
+        usleep(1000);
+        if (death_mutex(info, 0) > 0)
 			break;
 	}
 }
