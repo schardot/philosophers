@@ -1,9 +1,9 @@
 #include "../philo.h"
 
-void print_msg(long time, t_philo *p, e_messages msg)
+void print_msg(long time, t_philo *p, int id, e_messages msg)
 {
 	pthread_mutex_lock(p->info->write_mutex);
-	printf("%ld Philosopher %d ", time, p->id);
+	printf("%ld Philosopher %d ", time, id);
 	if (msg == TAKEN_FORK)
 		printf("has taken a fork\n");
 	else if (msg == IS_EATING)

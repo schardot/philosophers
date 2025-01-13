@@ -4,6 +4,7 @@ t_info *init_info(int argc, char **argv)
 {
 	t_info *in;
 
+	in = NULL;
 	in = (t_info *)malloc(sizeof(t_info));
 	if (!in)
 		return (NULL);
@@ -43,13 +44,11 @@ t_philo **init_philos_array(t_info *in)
 t_philo *init_philo_struct(int i, t_info *info)
 {
 	t_philo *philo;
-	(void)info;
+
 	philo = malloc(sizeof(t_philo));
 	if (!philo)
 		return (NULL);
 	philo->id = i + 1;
-	if (pthread_mutex_init(&philo->fork, NULL) != 0)
-		return (NULL); // cleanup better afterwards
 	philo->is_eating = 0;
 	philo->has_eaten = 0;
 	philo->dead = 0;
@@ -59,13 +58,21 @@ t_philo *init_philo_struct(int i, t_info *info)
 	philo->time_sleeping = info->time_sleeping;
 	philo->num_meals = info->num_meals;
 	philo->start = info->start;
-	philo->info = malloc(sizeof(t_info *));
 	philo->info = info;
-    philo->lmeal_tval = info->start;
-    //gettimeofday(&philo->lmeal_tval, NULL);
-    //philo->last_meal = (philo->lmeal_tval.tv_sec * 1000) + (philo->lmeal_tval.tv_usec / 1000);
-    return (philo);
+	philo->lmeal_tval = info->start;
+	init_philo_mtxs(philo);
+	return (philo);
+}
 
+t_philo	*init_philo_mtxs(t_philo *p)
+{
+	p->eaten_mtx = malloc(sizeof(pthread_mutex_t));
+	p->lmeal_mtx = malloc(sizeof(pthread_mutex_t));
+	if (!p->eaten_mtx || !p->lmeal_mtx)
+		return (NULL);
+	pthread_mutex_init(p->eaten_mtx, NULL);
+	pthread_mutex_init(p->lmeal_mtx, NULL);
+	return (p);
 }
 
 t_info	*init_info_mtxs(t_info *in)

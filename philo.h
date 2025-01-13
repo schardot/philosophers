@@ -30,11 +30,10 @@ typedef struct	s_philo
 	int				id;
 	int				is_eating;
 	int				has_eaten;
-	pthread_mutex_t	eaten_mtx;
-	long 			last_meal;
+	pthread_mutex_t	*eaten_mtx;
 	struct timeval	lmeal_tval;
-	pthread_mutex_t	lmeal_mtx;
-	pthread_mutex_t	fork;
+	pthread_mutex_t	*lmeal_mtx;
+	pthread_mutex_t	*fork;
 	pthread_mutex_t	*otherfork;
 	int				dead;
 	int				ph_count;
@@ -62,14 +61,22 @@ int		ft_atoi(const char *n);
 int		ft_isspace(int c);
 int		death_mutex(t_info *info, int mode);
 void	init_dinner(t_info *in);
-void	print_msg(long time, t_philo *p, e_messages msg);
+void	print_msg(long time, t_philo *p, int id, e_messages msg);
 long	get_time(struct timeval since);
 int		meals_mutex(t_philo *philo, int mode);
 t_philo	**init_philos_array(t_info *in);
 t_philo	*init_philo_struct(int i, t_info *info);
+void	*routine(void *arg);
 void	monitor(int num_philos, t_philo **ps, t_info *info);
 t_info	*init_info_mtxs(t_info *in);
 void	*one_philo(t_philo *p);
 void	assign_fork(t_philo *p);
+t_philo	*init_philo_mtxs(t_philo *p);
+void	eat(t_philo *p, int id);
+void	sleeping(t_philo *p, int id);
+void	think(t_philo *p, int id);
+void	cleanup_info(t_info *in);
+void	cleanup_philos_array(t_philo **ps, t_info *in);
+void	cleanup_all(t_philo **ps, pthread_t *th, t_info *i);
 
 #endif

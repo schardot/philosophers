@@ -6,7 +6,9 @@ SRC = src/main.c \
 	src/arguments.c \
 	src/utils.c \
 	src/init.c \
-	src/mutexes.c
+	src/mutexes.c \
+	src/action.c \
+	src/cleanup.c
 
 NAME = philo
 
