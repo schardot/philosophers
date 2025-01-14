@@ -49,7 +49,7 @@ void *routine(void *arg)
     if (p->ph_count == 1)
 		return(one_philo(p));
 	if (id % 2 == 0)
-        usleep(p->time_eating / 2);
+        precise_usleep(p->time_eating / 2, p->start);
     while (1)
     {
 		if (death_mutex(p->info, 0) > 0)
@@ -58,7 +58,10 @@ void *routine(void *arg)
         sleeping(p, id);
         think(p, id);
 		if (p->has_eaten == p->info->num_meals)
-			break;
+        {
+            p->full = 1;
+            break ;
+        }
 	}
 	return (NULL);
 }
@@ -101,13 +104,19 @@ void monitor(int num_philos, t_philo **ps, t_info *info)
 			pthread_mutex_unlock(ps[i]->lmeal_mtx);
 			if (time_elapsed > (info->time_hungry_max / 1000))
 			{
-				print_msg(get_time(ps[i]->info->start), ps[i], i + 1, DIED);
-				death_mutex(info, 1);
-				return (cleanup_all(ps, info->threads, info));
+                if (ps[i]->full == 0)
+                {
+                    pthread_mutex_lock(info->write_mutex);
+                    printf("This is time elapsed: %ld and this is time hungry max: %ld\n", time_elapsed, (info->time_hungry_max / 1000));
+                    pthread_mutex_unlock(info->write_mutex);
+                    print_msg(get_time(ps[i]->info->start), ps[i], i + 1, DIED);
+                }
+                death_mutex(info, 1);
+				return ;
 			}
 			i++;
         }
-        usleep(1000);
+        precise_usleep(1000, ps[0]->start);
         if (death_mutex(info, 0) > 0)
 			break;
 	}

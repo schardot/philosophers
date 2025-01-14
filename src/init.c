@@ -8,9 +8,9 @@ t_info *init_info(int argc, char **argv)
 	in = (t_info *)malloc(sizeof(t_info));
 	if (!in)
 		return (NULL);
-	if (!init_info_mtxs(in))
+    in->ph_count = ft_atoi(argv[1]);
+    if (!init_info_mtxs(in))
 		return (NULL);
-	in->ph_count = ft_atoi(argv[1]);
 	in->time_hungry_max = ft_atoi(argv[2]) * 1000;
 	in->time_eating = ft_atoi(argv[3]) * 1000;
 	in->time_sleeping = ft_atoi(argv[4]) * 1000;
@@ -51,6 +51,7 @@ t_philo *init_philo_struct(int i, t_info *info)
 	philo->id = i + 1;
 	philo->is_eating = 0;
 	philo->has_eaten = 0;
+    philo->full = 0;
 	philo->dead = 0;
 	philo->ph_count = info->ph_count;
 	philo->time_hungry_max = info->time_hungry_max;

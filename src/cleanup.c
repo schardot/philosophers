@@ -34,7 +34,8 @@ void cleanup_all(t_philo **ps, pthread_t *th, t_info *in)
     if (ps)
         cleanup_philos_array(ps, in);
     i = 0;
-    if (th)
-        free(th);
+    (void) th;
+    // if (th)
+    //     free(th);
     cleanup_info(in);
 }

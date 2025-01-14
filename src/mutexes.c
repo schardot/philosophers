@@ -4,14 +4,16 @@ int	death_mutex(t_info *info, int mode)
 {
 	int	value;
 
-	value = -1;
-	pthread_mutex_lock(info->death_mutex);
-	if (mode == 0)
+	value = 0;
+    if (pthread_mutex_lock(info->death_mutex) != 0)
+        return (-1);
+    if (mode == 0)
 		value = info->dead;
 	if (mode == 1)
 		info->dead = 1;
-	pthread_mutex_unlock(info->death_mutex);
-	return (value);
+    if (pthread_mutex_unlock(info->death_mutex) != 0)
+        return (-1);
+    return (value);
 }
 
 int meals_mutex(t_philo *philo, int mode)
