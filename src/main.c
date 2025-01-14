@@ -49,7 +49,7 @@ void *routine(void *arg)
     if (p->ph_count == 1)
 		return(one_philo(p));
 	if (id % 2 == 0)
-        precise_usleep(p->time_eating / 2, p->start);
+        usleep(p->time_eating / 3);
     while (1)
     {
 		if (death_mutex(p->info, 0) > 0)
@@ -93,6 +93,7 @@ void monitor(int num_philos, t_philo **ps, t_info *info)
 {
 	int i;
 	long time_elapsed;
+
     usleep(1000);
     while (1)
 	{
@@ -116,7 +117,6 @@ void monitor(int num_philos, t_philo **ps, t_info *info)
 			}
 			i++;
         }
-        precise_usleep(1000, ps[0]->start);
         if (death_mutex(info, 0) > 0)
 			break;
 	}

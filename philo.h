@@ -33,6 +33,7 @@ typedef struct	s_philo
     int             full;
 	pthread_mutex_t	*eaten_mtx;
 	struct timeval	lmeal_tval;
+    struct timeval  usleep_tval;
 	pthread_mutex_t	*lmeal_mtx;
 	pthread_mutex_t	*fork;
 	pthread_mutex_t	*otherfork;
@@ -79,6 +80,6 @@ void	think(t_philo *p, int id);
 void	cleanup_info(t_info *in);
 void	cleanup_philos_array(t_philo **ps, t_info *in);
 void	cleanup_all(t_philo **ps, pthread_t *th, t_info *i);
-void    precise_usleep(long duration_ms, struct timeval start_time);
+// void    usleep(long duration_ms);
 
 #endif

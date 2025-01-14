@@ -27,17 +27,19 @@ long	get_time(struct timeval since)
 	return (time_elapsed);
 }
 
-void precise_usleep(long duration_ms, struct timeval start_time)
-{
-    struct timeval current_time;
-    long elapsed_time;
+// void usleep(long duration_ms)
+// {
+//     struct timeval current_time;
+//     struct timeval now;
+//     long elapsed_time;
 
-    while (1)
-    {
-        gettimeofday(&current_time, NULL);
-        elapsed_time = (current_time.tv_sec - start_time.tv_sec) * 1000 + (current_time.tv_usec - start_time.tv_usec) / 1000;
-        if (elapsed_time >= duration_ms)
-            break;
-        usleep(100);
-    }
-}
+//     gettimeofday(&now, NULL);
+//     while (1)
+//     {
+//         gettimeofday(&current_time, NULL);
+//         elapsed_time = (current_time.tv_sec - now.tv_sec) * 1000 + (current_time.tv_usec - now.tv_usec) / 1000;
+//         if (elapsed_time >= duration_ms)
+//             break;
+//         usleep(100);
+//     }
+// }
