@@ -29,11 +29,9 @@ void    cleanup_philos_array(t_philo **ps, t_info *in)
 
 void cleanup_all(t_philo **ps, pthread_t *th, t_info *in)
 {
-    int i;
 
     if (ps)
         cleanup_philos_array(ps, in);
-    i = 0;
     (void) th;
     // if (th)
     //     free(th);
