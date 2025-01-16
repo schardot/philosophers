@@ -33,7 +33,6 @@ typedef struct	s_philo
     int             full;
 	pthread_mutex_t	*eaten_mtx;
 	struct timeval	lmeal_tval;
-    struct timeval  usleep_tval;
 	pthread_mutex_t	*lmeal_mtx;
 	pthread_mutex_t	*fork;
 	pthread_mutex_t	*otherfork;
@@ -56,6 +55,18 @@ typedef enum
 	DIED
 } e_messages;
 
+typedef enum
+{
+	NUM_EATEN,
+	ATE_ONE,
+} e_mealmtx;
+
+typedef enum
+{
+	WHENWASIT,
+	UPDATE
+} e_lmealmtx;
+
 t_info	*check_args(int argc, char **argv);
 int		is_argv_digit(char *argv);
 t_info	*init_info(int argc, char **argv);
@@ -65,7 +76,6 @@ int		death_mutex(t_info *info, int mode);
 void	init_dinner(t_info *in);
 void	print_msg(long time, t_philo *p, int id, e_messages msg);
 long	get_time(struct timeval since);
-int		meals_mutex(t_philo *philo, int mode);
 t_philo	**init_philos_array(t_info *in);
 t_philo	*init_philo_struct(int i, t_info *info);
 void	*routine(void *arg);
@@ -81,5 +91,8 @@ void	cleanup_info(t_info *in);
 void	cleanup_philos_array(t_philo **ps, t_info *in);
 void	cleanup_all(t_philo **ps, pthread_t *th, t_info *i);
 // void    usleep(long duration_ms);
+int		lmeal_mutex(t_philo *philo, e_lmealmtx mode);
+int		meals_mutex(t_philo *philo, e_mealmtx mode);
+void	precise_usleep(long ms);
 
 #endif
