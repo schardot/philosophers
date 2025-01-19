@@ -28,15 +28,16 @@ void init_dinner(t_info *in)
 	while (++i < in->ph_count)
 	{
 		if (pthread_create(&threads_array[i], NULL, &routine, philos_array[i]) != 0)
-			return (cleanup_all(philos_array, threads_array, in));
+			return ;
 	}
 	monitor(in->ph_count, philos_array, in);
 	i = -1;
 	while (++i < in->ph_count)
 	{
 		if (pthread_join(threads_array[i], NULL) != 0)
-			return (cleanup_all(philos_array, threads_array, in));
+			return ;
 	}
+    cleanup_all(philos_array, threads_array, in);
 }
 
 void *routine(void *arg)
@@ -48,8 +49,6 @@ void *routine(void *arg)
 	id = p->id;
 	if (p->ph_count == 1)
 		return(one_philo(p));
-	// if (id % 2 == 0)
-	// 	precise_usleep(p->time_eating / 3);
     while (!death_mutex(p->info, 0))
     {
         think(p, id);
