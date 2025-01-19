@@ -1,14 +1,13 @@
 #include "../philo.h"
 
-t_info *check_args(int argc, char **argv)
+int check_args(t_info *in, int argc, char **argv)
 {
-	t_info *in;
 	int i;
 
 	if (argc != 5 && argc != 6)
 	{
 		printf("Incorrect number of arguments\n");
-		return (NULL);
+		return (1);
 	}
 	i = 0;
 	while (++i < argc)
@@ -16,17 +15,15 @@ t_info *check_args(int argc, char **argv)
 		if (!is_argv_digit(argv[i]))
 		{
 			printf("All arguments need to be positive numbers\n");
-			return (NULL);
+			return (1);
 		}
 	}
-	in = NULL;
-	in = init_info(argc, argv);
-	if (!in)
-	{
+    if (init_info(in, argc, argv))
+    {
 		printf("Error initiliazing info struct\n");
-		return (NULL);
+		return (1);
 	}
-	return (in);
+	return (0);
 }
 
 int is_argv_digit(char *argv)

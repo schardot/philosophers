@@ -21,7 +21,7 @@ typedef struct s_info
 	pthread_mutex_t *forks;
 	pthread_mutex_t *death_mutex;
 	pthread_mutex_t *write_mutex;
-    t_philo         **philos;
+	t_philo         **philos;
 	long start_time;
 	struct timeval start;
 	int dead;
@@ -33,7 +33,7 @@ typedef struct	s_philo
 	int				id;
 	int				is_eating;
 	int				has_eaten;
-    int             full;
+	int             full;
 	pthread_mutex_t	*eaten_mtx;
 	struct timeval	lmeal_tval;
 	pthread_mutex_t	*lmeal_mtx;
@@ -70,9 +70,9 @@ typedef enum
 	UPDATE
 } e_lmealmtx;
 
-t_info	*check_args(int argc, char **argv);
+int		check_args(t_info *in, int argc, char **argv);
 int		is_argv_digit(char *argv);
-t_info	*init_info(int argc, char **argv);
+int		init_info(t_info *in, int argc, char **argv);
 int		ft_atoi(const char *n);
 int		ft_isspace(int c);
 int		death_mutex(t_info *info, int mode);
