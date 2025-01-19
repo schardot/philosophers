@@ -48,15 +48,13 @@ void *routine(void *arg)
 	id = p->id;
 	if (p->ph_count == 1)
 		return(one_philo(p));
-	if (id % 2 == 0)
-		precise_usleep(p->time_eating / 3);
-	while (1)
-	{
-		if (death_mutex(p->info, 0) > 0)
-			break;
-		eat(p, id);
+	// if (id % 2 == 0)
+	// 	precise_usleep(p->time_eating / 3);
+    while (!death_mutex(p->info, 0))
+    {
+        think(p, id);
+        eat(p, id);
 		sleeping(p, id);
-		think(p, id);
 		if (p->has_eaten == p->info->num_meals)
 		{
 			p->full = 1;
@@ -68,29 +66,19 @@ void *routine(void *arg)
 
 void	assign_fork(t_philo *p)
 {
-	// int	next;
+	int	next;
 
-	// next = (p->id) % p->ph_count;
-	// p->fork = &p->info->forks[p->id - 1];
-	// p->otherfork = &p->info->forks[next];
-	// if (p->id % 2 == 0)
-	// {
-	// 	p->otherfork = &p->info->forks[p->id - 1];
-	// 	p->fork = &p->info->forks[next];
-	// }
-	int	right;
-
-	right = p->id - 2;
-	if (right < 0)
-		right = p->info->ph_count - 1;
+	next = p->id - 2;
+	if (next < 0)
+		next = p->info->ph_count - 1;
 	if ((p->id - 1) % 2 == 0 && (p->id - 1) != p->info->ph_count - 1)
 	{
 		p->fork = &p->info->forks[p->id - 1];
-		p->otherfork = &p->info->forks[right];
+		p->otherfork = &p->info->forks[next];
 	}
 	else
 	{
-		p->fork = &p->info->forks[right];
+		p->fork = &p->info->forks[next];
 		p->otherfork = &p->info->forks[p->id - 1];
 	}
 }
@@ -109,29 +97,23 @@ void monitor(int num_philos, t_philo **ps, t_info *info)
 	int i;
 	long time_elapsed;
 
-	precise_usleep(1000);
-	while (1)
-	{
+    while (!death_mutex(info, 0))
+    {
 		i = 0;
 		while (i < num_philos)
 		{
 			time_elapsed = lmeal_mutex(ps[i], WHENWASIT);
-			if (time_elapsed > (info->time_hungry_max / 1000))
+			if (time_elapsed - 1 > (info->time_hungry_max / 1000))
 			{
-				if (ps[i]->full == 0)
+                if (ps[i]->full == 0)
 				{
-					pthread_mutex_lock(info->write_mutex);
-					printf("This is time elapsed: %ld and this is time hungry max: %ld\n", time_elapsed, (info->time_hungry_max / 1000));
-					pthread_mutex_unlock(info->write_mutex);
-					print_msg(get_time(ps[i]->info->start), ps[i], i + 1, DIED);
+                    death_mutex(info, 1);
+                    print_msg(get_time(ps[i]->info->start), ps[i], i + 1, DIED);
 				}
-				death_mutex(info, 1);
 				return ;
 			}
 			i++;
 		}
-		if (death_mutex(info, 0) > 0)
-			break;
 	}
 }
 

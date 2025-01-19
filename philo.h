@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <sys/time.h>
 
+typedef struct s_philo t_philo;
+
 typedef struct s_info
 {
 	int		ph_count;
@@ -19,6 +21,7 @@ typedef struct s_info
 	pthread_mutex_t *forks;
 	pthread_mutex_t *death_mutex;
 	pthread_mutex_t *write_mutex;
+    t_philo         **philos;
 	long start_time;
 	struct timeval start;
 	int dead;
@@ -94,5 +97,6 @@ void	cleanup_all(t_philo **ps, pthread_t *th, t_info *i);
 int		lmeal_mutex(t_philo *philo, e_lmealmtx mode);
 int		meals_mutex(t_philo *philo, e_mealmtx mode);
 void	precise_usleep(long ms);
+void check_full(t_info *in);
 
 #endif

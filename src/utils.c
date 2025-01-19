@@ -3,17 +3,22 @@
 void print_msg(long time, t_philo *p, int id, e_messages msg)
 {
 	pthread_mutex_lock(p->info->write_mutex);
-	printf("%ld %d ", time, id);
-	if (msg == TAKEN_FORK)
-		printf("has taken a fork\n");
-	else if (msg == IS_EATING)
-		printf("is eating\n");
-	else if (msg == IS_SLEEPING)
-		printf("is sleeping\n");
-	else if (msg == IS_THINKING)
-		printf("is thinking\n");
-	else if (msg == DIED)
-		printf("died\n");
+    if (!death_mutex(p->info, 0) && msg != DIED)
+    {
+        printf("%ld %d ", time, id);
+        if (msg == TAKEN_FORK)
+            printf("has taken a fork\n");
+        else if (msg == IS_EATING)
+            printf("is eating\n");
+        else if (msg == IS_SLEEPING)
+            printf("is sleeping\n");
+        else if (msg == IS_THINKING)
+            printf("is thinking\n");
+    }
+    else if (msg == DIED)
+    {
+        printf("%ld %d died\n", time, id);
+    }
 	pthread_mutex_unlock(p->info->write_mutex);
 }
 
@@ -33,5 +38,5 @@ void	precise_usleep(long ms)
 
 	gettimeofday(&stval, NULL);
 	while ((get_time(stval) * 1000) < ms)
-		usleep(1000);
+		usleep(100);
 }

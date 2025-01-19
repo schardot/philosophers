@@ -1,6 +1,6 @@
 CC = clang
 
-FLAGS = -g -Wall -Wextra -Werror -lpthread
+FLAGS = -g -Wall -Wextra -Werror -pthread
 
 SRC = src/main.c \
 	src/arguments.c \
