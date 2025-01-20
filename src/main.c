@@ -1,4 +1,5 @@
 #include "../philo.h"
+#include <string.h>
 
 void cleanup_arrays(t_philo **ps, pthread_t **th, t_info *i);
 
@@ -6,7 +7,7 @@ int main(int argc, char **argv)
 {
 	t_info  in;
 
-	if (!check_args(&in, argc, argv))
+	if (check_args(&in, argc, argv))
 		return (1);
 	init_dinner(&in);
 }
@@ -23,6 +24,7 @@ void init_dinner(t_info *in)
 	threads_array = malloc(in->ph_count * sizeof(pthread_t));
 	if (!threads_array)
 		return (cleanup_all(philos_array, NULL, in));
+    memset(threads_array, 0, in->ph_count);
 	i = -1;
 	while (++i < in->ph_count)
 	{
@@ -53,13 +55,13 @@ void *routine(void *arg)
 		think(p, id);
 		eat(p, id);
 		sleeping(p, id);
-		if (p->has_eaten == p->info->num_meals)
+		if (meals_mutex(p, NUM_EATEN) == p->num_meals)
 		{
 			p->full = 1;
 			break ;
 		}
 	}
-	return (NULL);
+	return (arg);
 }
 
 void	assign_fork(t_philo *p)

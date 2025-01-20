@@ -1,14 +1,14 @@
 #include "../philo.h"
 
-int	init_info(t_info *in, int argc, char **argv)
+int init_info(t_info *in, int argc, char **argv)
 {
-	in = NULL;
 	in->ph_count = ft_atoi(argv[1]);
 	if (!init_info_mtxs(in))
 		return (1);
 	in->time_hungry_max = ft_atoi(argv[2]) * 1000;
 	in->time_eating = ft_atoi(argv[3]) * 1000;
 	in->time_sleeping = ft_atoi(argv[4]) * 1000;
+    in->num_meals = -1;
 	if (argc == 6)
 		in->num_meals = ft_atoi(argv[5]);
 	gettimeofday(&in->start, NULL);
