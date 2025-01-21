@@ -29,15 +29,15 @@ void init_dinner(t_info *in)
 	while (++i < in->ph_count)
 	{
 		if (pthread_create(&threads_array[i], NULL, &routine, philos_array[i]) != 0)
-			return ;
+			return (cleanup_all(philos_array, threads_array, in));
 	}
 	monitor(in->ph_count, philos_array, in);
-	i = -1;
-	while (++i < in->ph_count)
-	{
-		if (pthread_join(threads_array[i], NULL) != 0)
-			return ;
-	}
+	// i = -1;
+	// while (++i < in->ph_count)
+	// {
+	// 	if (pthread_join(threads_array[i], NULL) != 0)
+	// 		return (cleanup_all(philos_array, threads_array, in));
+	// }
 	cleanup_all(philos_array, threads_array, in);
 }
 
